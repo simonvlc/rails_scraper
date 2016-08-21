@@ -12,7 +12,15 @@ class Scrape
       self.director = doc.css("//div.col-sm-19.col-xs-14.text-left")[2].text.strip
       self.genre = doc.css("//div.col-sm-19.col-xs-14.text-left")[1].text.strip
       self.runtime = doc.css("//div.col-sm-19.col-xs-14.text-left")[6].text.strip
-      self.synopsys = doc.css("#movieSynopsis").text.strip
+
+      # preventing encoding problems
+      s = doc.css("#movieSynopsis").text.strip
+      if ! s.valid_encoding?
+        s = s.encode("UTF-16be", :invalid=>:replace, :replace=>"?").encode('UTF-8')
+      end
+      self.synopsys = s
+
+
       return true
     rescue Exception => e
       self.failure = "Something went wrong with the scrape"
